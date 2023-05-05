@@ -2,8 +2,8 @@
 Documentation    Testing Assignment 2
 Library    SeleniumLibrary
 # "Given that the user is on the IMDb homepage"
-Suite Setup    Open Browser    https://www.imdb.com/   firefox
-Suite Teardown    Close Browser
+Test Setup    Open Browser    https://www.imdb.com/   firefox
+Test Teardown    Close Browser
 
 *** Variables ***
 ${SEARCH_QUERY}    The Shawshank Redemption
