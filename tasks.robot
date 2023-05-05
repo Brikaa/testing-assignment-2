@@ -25,9 +25,12 @@ Verify user can access the top-rated movies section
     And first movie in the list should be ${TOP_RATED_MOVIE}
 
 Verify user can search for movies released in a specific year on IMDb
-    When user clicks on "All" span
+    When user clicks on All search option
     And user clicks on "Advanced Search" span
-    And user clicks on "Advanced Title Search" link
+    Then user should be directed to page containing "Advanced Title Search" link
+    When user clicks on "Advanced Title Search" link
+    And user selects "Feature Film" as title type
+    And user selects the "Action" genre from Genres
 
 *** Keywords ***
 User enters ${search_query} in the search bar
@@ -37,8 +40,7 @@ User clicks the search button
     Click Button    id=suggestion-search-button
 
 WebElement ${locator} text should contain ${text}
-    ${web_element}=    Get WebElement    ${locator}
-    ${actual_text}=    Get Text    ${web_element}
+    ${actual_text}=    Get Text    ${locator}
     Should Contain    ${actual_text}    ${text}    ignore_case=True
 
 User should directed to the results page
@@ -71,3 +73,18 @@ User clicks on ${text} span
 
 User clicks on ${text} link
     Click on a with text ${text}
+
+User clicks on All search option
+    Click Element    xpath://span[@class="ipc-btn__text" and text()="All"]
+
+User should be directed to page containing ${text} link
+    Page Should Contain Element    xpath://a[text()=${text}]
+
+Click on input with name ${name} and value ${value}
+    Click Element    xpath://input[@name=${name} and @value=${value}]
+
+User selects "Feature Film" as title type
+    Click on input with name "title_type" and value "feature"
+
+User selects the "Action" genre from Genres
+    Click on input with name "genres" and value "action"
