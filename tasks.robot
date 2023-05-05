@@ -11,8 +11,8 @@ ${TOP_RATED_MOVIE}    The Shawshank Redemption
 
 *** Tasks ***
 Verify user can search for a movie on the IMDb homepage
-    When user enters ${SEARCH_QUERY}
-    And user clicks search button
+    When user enters ${SEARCH_QUERY} in the search bar
+    And user clicks the search button
     Then user should directed to the results page
     And results page header should contain ${SEARCH_QUERY}
     And first search result should contain ${SEARCH_QUERY}
@@ -25,10 +25,10 @@ Verify user can access the top-rated movies section
     And first movie in the list should be ${TOP_RATED_MOVIE}
 
 *** Keywords ***
-User enters ${search_query}
+User enters ${search_query} in the search bar
     Input Text    id=suggestion-search    ${search_query}
 
-User clicks search button
+User clicks the search button
     Click Button    id=suggestion-search-button
 
 WebElement ${locator} text should contain ${text}
@@ -58,6 +58,7 @@ User should be directed to the Top 250 Movies movies section page
     Title Should Be    Top 250 Movies - IMDb
 
 Page should display a list of the Top 250 Movies
+    Page Should Contain    IMDb Top 250 Movies
     Page Should Contain Element    class:lister
 
 First movie in the list should be ${text}
