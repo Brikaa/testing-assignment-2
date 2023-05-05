@@ -1,6 +1,8 @@
 *** Settings ***
 Documentation    Testing Assignment 2
 Library    SeleniumLibrary
+Library    String
+Library    Collections
 # "Given that the user is on the IMDb homepage"
 Test Setup    Open Browser    https://www.imdb.com/   firefox
 Test Teardown    Close Browser
@@ -31,6 +33,12 @@ Verify user can search for movies released in a specific year on IMDb
     When user clicks on "Advanced Title Search" link
     And user selects "Feature Film" as title type
     And user selects the "Action" genre from Genres
+    And user enters a start year and end year in the "Release Date" fields (2010 - 2020)
+    And User clicks on search button in advanced search
+    And user clicks on "User Rating" link
+    Then all movies displayed in the search results page should be Action movies
+    # And all movies displayed in the search results page should be released between 2010 and 2020
+    # And all movies displayed in the search results page should be the search results page should be sorted by User Rating
 
 *** Keywords ***
 User enters ${search_query} in the search bar
@@ -88,3 +96,29 @@ User selects "Feature Film" as title type
 
 User selects the "Action" genre from Genres
     Click on input with name "genres" and value "action"
+
+Enter ${value} in input with name ${name}
+    Input Text    xpath://input[@name=${name}]    ${value}
+
+User enters a start year and end year in the "Release Date" fields (${start_year} - ${end_year})
+    Enter 2010 in input with name "release_date-min"
+    Enter 2020 in input with name "release_date-max"
+
+User clicks on search button in advanced search
+    Click Button    xpath://button[@type="submit" and text()="Search"]
+
+All ${elements} are ${genre}
+    # Get text
+    # Remove spaces
+    # Split text by ,
+    # Check if genre in splitted text
+    FOR    ${element}    IN    @{elements}
+        ${text}=    Get Text    ${element}
+        ${text_no_spaces}=    Replace String    ${text}    ${SPACE}    ${EMPTY}
+        @{genre_list}=    Split String    ${text_no_spaces}    ,
+        List Should Contain Value    ${genre_list}    ${genre}
+    END
+
+All movies displayed in the search results page should be ${genre} movies
+    @{elements}=    Get WebElements    //div[contains(@class, "lister-item")]//span[@class="genre"]
+    All ${elements} are ${genre}
