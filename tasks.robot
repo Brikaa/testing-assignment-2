@@ -35,10 +35,11 @@ Verify user can search for movies released in a specific year on IMDb
     And user selects the "Action" genre from Genres
     And user enters a start year and end year in the "Release Date" fields (2010 - 2020)
     And User clicks on search button in advanced search
+    Sleep    2    # For some reason, "User Rating" link does not work instantly
     And user clicks on "User Rating" link
     Then all movies displayed in the search results page should be Action movies
-    # And all movies displayed in the search results page should be released between 2010 and 2020
-    # And all movies displayed in the search results page should be the search results page should be sorted by User Rating
+    And all movies displayed in the search results page should be released between ${2010} and ${2020}
+    And all movies displayed in the search results page should be sorted by User Rating
 
 *** Keywords ***
 User enters ${search_query} in the search bar
@@ -122,3 +123,45 @@ All ${elements} are ${genre}
 All movies displayed in the search results page should be ${genre} movies
     @{elements}=    Get WebElements    //div[contains(@class, "lister-item")]//span[@class="genre"]
     All ${elements} are ${genre}
+
+All ${elements} are between ${start_year} and ${end_year}
+    # Get text
+    # Remove ( and )
+    # To int
+    # Check if >= start_year, <= end_year
+    FOR    ${element}    IN    @{elements}
+        ${text}=    Get Text    ${element}
+        ${year_str}=    Replace String Using Regexp    ${text}    [^0-9]    ${EMPTY}
+        ${year}=    Convert To Integer    ${year_str}
+        IF    ${year} < ${start_year} or ${year} > ${end_year}
+            Fail
+        END
+    END
+
+All movies displayed in the search results page should be released between ${start_year} and ${end_year}
+    @{elements}=    Get WebElements    class:lister-item-year
+    All ${elements} are between ${start_year} and ${end_year}
+
+Filter And Convert To Number
+    [Arguments]    ${element}
+    ${text}=    Get Text    ${element}
+    ${filtered}=    Replace String Using Regexp    ${text}    [^0-9.]    ${EMPTY}
+    ${float}=    Convert To Number    ${filtered}
+    RETURN    ${float}
+
+
+${elements} are sorted descendingly
+    # Check if elements[i] >= elements[i+1]
+    ${length}=    Get Length    ${elements}
+    FOR    ${i}    IN RANGE    ${length - 1}
+        ${first}=    Filter And Convert To Number    ${elements}[${i}]
+        ${second}=    Filter And Convert To Number    ${elements}[${i + 1}]
+        IF    ${first} < ${second}
+            Fail
+        END
+    END
+
+
+All movies displayed in the search results page should be sorted by User Rating
+    @{elements}=    Get WebElements    class:ratings-imdb-rating
+    ${elements} are sorted descendingly
