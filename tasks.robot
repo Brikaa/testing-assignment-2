@@ -19,10 +19,15 @@ Verify user can search for a movie on the IMDb homepage
 
 Verify user can access the top-rated movies section
     When user clicks on menu
-    And user clicks on Top 250 Movies
+    And user clicks on "Top 250 Movies" span
     Then user should be directed to the Top 250 Movies movies section page
     And page should display a list of the Top 250 Movies
     And first movie in the list should be ${TOP_RATED_MOVIE}
+
+Verify user can search for movies released in a specific year on IMDb
+    When user clicks on "All" span
+    And user clicks on "Advanced Search" span
+    And user clicks on "Advanced Title Search" link
 
 *** Keywords ***
 User enters ${search_query} in the search bar
@@ -48,11 +53,8 @@ First search result should contain ${text}
 User clicks on menu
     Click Element    id:imdbHeader-navDrawerOpen
 
-User clicks on all button
-    Click Element    class:ipc-btn__text
-
-User clicks on Top 250 Movies
-    Click Element    xpath://span[text()="Top 250 Movies"]
+Click on ${element} with text ${text}
+    Click Element    xpath://${element}\[text()=${text}]
 
 User should be directed to the Top 250 Movies movies section page
     Title Should Be    Top 250 Movies - IMDb
@@ -63,3 +65,9 @@ Page should display a list of the Top 250 Movies
 
 First movie in the list should be ${text}
     WebElement xpath://table/tbody/tr[1]/td[@class="titleColumn"]/a text should contain ${text}
+
+User clicks on ${text} span
+    Click on span with text ${text}
+
+User clicks on ${text} link
+    Click on a with text ${text}
